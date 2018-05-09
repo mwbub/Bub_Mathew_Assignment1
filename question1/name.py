@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 
-import glob
+import glob, os
 
 find = '.'
 replace = ','
 
+if not os.path.exists('replace'):
+	os.mkdir('replace')
+
 for filename in glob.glob('*.txt'):
-	f = open(filename, 'r')
-	string = f.read()
-	f.close()
+	with open(filename, 'r') as f:
+		string = f.read()	
 	replaced = string.replace(find, replace)
-	print(replaced)
+	with open('replace/' + filename, 'w') as f:
+		f.write(replaced)
+	
