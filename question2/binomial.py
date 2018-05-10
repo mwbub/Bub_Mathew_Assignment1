@@ -43,5 +43,6 @@ fig.subplots_adjust(left = 0, right = 2.1, bottom = 0, top = 1, wspace = 0.1)
 fig.suptitle('Fraction of Successes in $N$ Attempts', 
              fontsize = 20, x = 1.05, y = 1.2)
 ax[2].legend(labels = ['Successes', 'Failures'])
+fig.show()
 
 print('Theoretically, the fraction of successes should be:', bentCoin(p,n,k))
