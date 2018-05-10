@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+import numpy as np
 
 def prod(l):
     product = 1
@@ -23,3 +25,23 @@ def bentCoin(p,n,k):
         prob += choose(n,i) * p**i * (1-p)**(n-i)
     return prob
 
+fig, ax = plt.subplots(1,3)
+N = [10,100,1000]
+p = 0.25
+n = 4
+k = 1
+
+for i in range(3):
+    x = np.random.random((N[i], n))
+    y = (x < p).sum(1)
+    s = (y >= k).sum()
+    patches, texts, autotexts = ax[i].pie([s, N[i]-s], autopct = '%.1f%%')
+    [autotexts[j].set_fontsize(15) for j in range(2)]
+    ax[i].set_title('$N = ' + str(N[i]) + '$', fontsize = 15)
+
+fig.subplots_adjust(left = 0, right = 2.1, bottom = 0, top = 1, wspace = 0.1)
+fig.suptitle('Fraction of Successes in $N$ Attempts', 
+             fontsize = 20, x = 1.05, y = 1.2)
+ax[2].legend(labels = ['Successes', 'Failures'])
+
+print('Theoretically, the fraction of successes should be:', bentCoin(p,n,k))
