@@ -67,9 +67,13 @@ class Ship:
         """ Choose a valid target to attack from a list of Ships. """
         mask = [not (other is self or other.isDestroyed()) for other in others]
         valid_targets = np.array(others)[mask]
-        return np.random.choice(valid_targets)
+        if len(valid_targets) == 0:
+            return None
+        else:
+            return np.random.choice(valid_targets)
     
     def __str__(self) -> str:
+        """ Return a string representation of this Ship's status. """
         stats = (self.name, self.shield, self.hull, self.lasers)
         stats_str = ("Status of ship {}:\nShield strength: {}\n"
                      "Hull strength: {}\nLaser strength: {}").format(*stats)
@@ -105,6 +109,46 @@ class Warship(Ship):
         self.shield = shield
         self.lasers = lasers
         self.missiles = lasers * 2
-    
         
+    def shoot(self, other) -> str:
+        """
+        Check whether this Warship will shoot lasers or missiles,
+        then shoot another Ship.
+        """
+        if np.random.random() > 0.3:
+            # shoot lasers
+            weapon = "lasers"
+            damage = self.lasers
+        else:
+            # shoot missiles
+            weapon = "missiles"
+            damage = self.missiles
+        attack_details = (self.name, other.name, weapon)
+        shot_str = "{} shot at {} with {}.\n".format(*attack_details)  
+        hit_str = other.hit(damage)
+        return shot_str + hit_str
     
+    def __str__(self) -> str:
+        """ Return a string representation of this Warship's status. """
+        stats = (self.name, self.shield, self.hull, self.lasers, self.missiles)
+        stats_str = ("Status of warship {}:\nShield strength: {}\n"
+                     "Hull strength: {}\nLaser strength: {}\n"
+                     "Missile strength: {}").format(*stats)
+        if self.isDestroyed():
+            stats_str += "\n{} is destroyed!".format(self.name)
+        return stats_str
+        
+class Speeder(ship):
+    """
+    A class representing a Speeder, a Ship which has a 50% chance to
+    dodge incoming attacks.
+
+    name - The name of the Speeder
+    shield - The shield strength of the Speeder
+    hull - The hull strength of the Speeder
+    lasers - The power of the Speeder's lasers
+    """
+    name: str
+    shield: float
+    hull: float
+    lasers: float 
