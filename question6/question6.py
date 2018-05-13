@@ -57,14 +57,54 @@ class Ship:
             result_str += "It now has {} shields and {} hull.".format(*result)
         return result_str
     
-    def shoot(self, other: Ship) -> str:
+    def shoot(self, other) -> str:
         """ Have this Ship shoot at another Ship. """
-        shot_str = "{} shot at {}.\n".format(self.name, other.name)
+        shot_str = "{} shot at {} with lasers.\n".format(self.name, other.name)
         hit_str = other.hit(self.lasers)
         return shot_str + hit_str
     
-    def chooseTarget(self, others: list) -> Ship:
+    def chooseTarget(self, others: list):
         """ Choose a valid target to attack from a list of Ships. """
         mask = [not (other is self or other.isDestroyed()) for other in others]
         valid_targets = np.array(others)[mask]
         return np.random.choice(valid_targets)
+    
+    def __str__(self) -> str:
+        stats = (self.name, self.shield, self.hull, self.lasers)
+        stats_str = ("Status of ship {}:\nShield strength: {}\n"
+                     "Hull strength: {}\nLaser strength: {}").format(*stats)
+        if self.isDestroyed():
+            stats_str += "\n{} is destroyed!".format(self.name)
+        return stats_str
+    
+class Warship(Ship):
+    """
+    A class representing a Warship, a Ship which can shoot powerful 
+    missiles in addition to lasers.
+    
+    name - The name of the Warship
+    shield - The shield strength of the Warship
+    hull - The hull strength of the Warship
+    lasers - The power of the Warship's lasers
+    missiles - The power of the Warship's missiles
+    """
+    name: str
+    shield: float
+    hull: float
+    lasers: float
+    missiles: float
+    
+    def __init__(self, name: str, shield: float, hull: float, 
+                 lasers: float) -> None:
+        """ 
+        Initialize a Warship with a name, shield strength, 
+        hull strength, laser strength, and missile strength.
+        """
+        self.name = name
+        self.hull = hull
+        self.shield = shield
+        self.lasers = lasers
+        self.missiles = lasers * 2
+    
+        
+    
