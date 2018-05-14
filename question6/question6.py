@@ -116,11 +116,11 @@ class Warship(Ship):
         then shoot another Ship.
         """
         if np.random.random() > 0.3:
-            # shoot lasers
+            # Shoot lasers
             weapon = "lasers"
             damage = self.lasers
         else:
-            # shoot missiles
+            # Shoot missiles
             weapon = "missiles"
             damage = self.missiles
         attack_details = (self.name, other.name, weapon)
@@ -138,7 +138,7 @@ class Warship(Ship):
             stats_str += "\n{} is destroyed!".format(self.name)
         return stats_str
         
-class Speeder(ship):
+class Speeder(Ship):
     """
     A class representing a Speeder, a Ship which has a 50% chance to
     dodge incoming attacks.
@@ -152,3 +152,45 @@ class Speeder(ship):
     shield: float
     hull: float
     lasers: float 
+
+    def hit(self, damage: float) -> str:
+        """ 
+        Check whether this Speeder will dodge an attack, then hit
+        this Speeder with a certain amount of damage if it does not dodge.
+        """
+        # Check for a dodge
+        if np.random.random() > 0.5:
+            return "{} dodged the attack!".format(self.name)
+        
+        # Otherwise, hit the Speeder with damage
+        self.shield -= damage
+        
+        # If the shields are depleted, take hull damage at 50% shot strength   
+        if self.shield < 0:
+            self.hull += self.shield / 2.
+            self.shield = 0
+        
+        # Return a string detailing the result of the damage
+        result_str = "{} was hit for {} damage. ".format(self.name, damage)
+        if self.isDestroyed():
+            self.hull = 0
+            result_str += "{} was destroyed!".format(self.name)
+        else:
+            result = (self.shield, self.hull)
+            result_str += "It now has {} shields and {} hull.".format(*result)
+        return result_str
+        
+    def __str__(self) -> str:
+        """ Return a string representation of this Speeder's status. """
+        stats = (self.name, self.shield, self.hull, self.lasers)
+        stats_str = ("Status of speeder {}:\nShield strength: {}\n"
+                     "Hull strength: {}\nLaser strength: {}").format(*stats)
+        if self.isDestroyed():
+            stats_str += "\n{} is destroyed!".format(self.name)
+        return stats_str
+        
+        
+        
+        
+        
+        
