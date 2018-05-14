@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 File name: question6.py
 Author: Mathew Bub
