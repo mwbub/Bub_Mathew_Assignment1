@@ -18,13 +18,8 @@ class Ship:
     hull - The hull strength of the Ship
     lasers - The power of the Ship's lasers
     """
-    name: str
-    shield: float
-    hull: float
-    lasers: float
     
-    def __init__(self, name: str, shield: float, hull: float, 
-                 lasers: float) -> None:
+    def __init__(self, name, shield, hull, lasers):
         """ 
         Initialize a Ship with a name, shield strength, 
         hull strength, and laser strength.
@@ -34,11 +29,11 @@ class Ship:
         self.shield = shield
         self.lasers = lasers
         
-    def isDestroyed(self) -> bool:
+    def isDestroyed(self):
         """ Check whether the Ship is destroyed. """
         return self.hull <= 0
 
-    def hit(self, damage: float) -> str:
+    def hit(self, damage):
         """ Hit this Ship with a certain amount of damage. """
         self.shield -= damage
         
@@ -57,13 +52,13 @@ class Ship:
             result_str += "It now has {} shields and {} hull.".format(*result)
         return result_str
     
-    def shoot(self, other) -> str:
+    def shoot(self, other):
         """ Have this Ship shoot at another Ship. """
         shot_str = "{} shot at {} with lasers.\n".format(self.name, other.name)
         hit_str = other.hit(self.lasers)
         return shot_str + hit_str
     
-    def chooseTarget(self, others: list):
+    def chooseTarget(self, others):
         """ Choose a valid target to attack from a list of Ships. """
         mask = [not (other is self or other.isDestroyed()) for other in others]
         valid_targets = np.array(others)[mask]
@@ -71,8 +66,12 @@ class Ship:
             return None
         else:
             return np.random.choice(valid_targets)
+        
+    def getName(self):
+        """ Return the name of the Ship. """
+        return self.name
     
-    def __str__(self) -> str:
+    def __str__(self):
         """ Return a string representation of this Ship's status. """
         stats = (self.name, self.shield, self.hull, self.lasers)
         stats_str = ("Status of ship {}:\nShield strength: {}\n"
@@ -92,14 +91,8 @@ class Warship(Ship):
     lasers - The power of the Warship's lasers
     missiles - The power of the Warship's missiles
     """
-    name: str
-    shield: float
-    hull: float
-    lasers: float
-    missiles: float
     
-    def __init__(self, name: str, shield: float, hull: float, 
-                 lasers: float) -> None:
+    def __init__(self, name, shield, hull, lasers):
         """ 
         Initialize a Warship with a name, shield strength, 
         hull strength, laser strength, and missile strength.
@@ -110,7 +103,7 @@ class Warship(Ship):
         self.lasers = lasers
         self.missiles = lasers * 2
         
-    def shoot(self, other) -> str:
+    def shoot(self, other):
         """
         Check whether this Warship will shoot lasers or missiles,
         then shoot another Ship.
@@ -128,7 +121,7 @@ class Warship(Ship):
         hit_str = other.hit(damage)
         return shot_str + hit_str
     
-    def __str__(self) -> str:
+    def __str__(self):
         """ Return a string representation of this Warship's status. """
         stats = (self.name, self.shield, self.hull, self.lasers, self.missiles)
         stats_str = ("Status of warship {}:\nShield strength: {}\n"
@@ -148,12 +141,8 @@ class Speeder(Ship):
     hull - The hull strength of the Speeder
     lasers - The power of the Speeder's lasers
     """
-    name: str
-    shield: float
-    hull: float
-    lasers: float 
 
-    def hit(self, damage: float) -> str:
+    def hit(self, damage):
         """ 
         Check whether this Speeder will dodge an attack, then hit
         this Speeder with a certain amount of damage if it does not dodge.
@@ -180,7 +169,7 @@ class Speeder(Ship):
             result_str += "It now has {} shields and {} hull.".format(*result)
         return result_str
         
-    def __str__(self) -> str:
+    def __str__(self):
         """ Return a string representation of this Speeder's status. """
         stats = (self.name, self.shield, self.hull, self.lasers)
         stats_str = ("Status of speeder {}:\nShield strength: {}\n"
@@ -188,6 +177,30 @@ class Speeder(Ship):
         if self.isDestroyed():
             stats_str += "\n{} is destroyed!".format(self.name)
         return stats_str
+    
+# Main
+
+# Instantiate 5 ships
+ships = [Ship("Space Ranch", 100., 100., 50.),
+         Ship("Miss Harmony", 100., 100., 50.),
+         Ship("Second Half", 100., 100., 50.),
+         Warship("The Tank", 100., 100., 50.),
+         Speeder("Firefly", 50., 50., 25.)]
+
+# Battle until only one ship remains
+battling = True
+while battling:
+    for ship in ships:
+        if not ship.isDestroyed():
+            target = ship.chooseTarget(ships)
+            if target is None:
+                # Declare the winner if there are no valid targets
+                print("{} wins!".format(ship.getName()))
+                battling = False
+            else:
+                print(ship.shoot(target)+'\n')
+
+        
         
         
         
